@@ -3,6 +3,8 @@ from openai import OpenAI
 from bs4 import BeautifulSoup
 import requests
 import os
+import sys
+from PySide6.QtWidgets import QMainWindow, QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QLineEdit, QTextEdit
 
 class APIClient:
     """Setup API Key and modules for to the chat completion calls"""
@@ -52,6 +54,42 @@ class WebsiteScraper:
                 else "No content found"
         return title, text
 
+class Gui(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle("Text Summariser")
+        self.setGeometry(200, 200, 400, 600)
+
+        # Create central widget
+        central_widget = QWidget(self)  # Create a central widget
+        self.setCentralWidget(central_widget)
+
+        # Instantiate the widget
+        layout = QVBoxLayout(central_widget)
+        label = QLabel("Enter Website", self)
+        self.website_edit = QLineEdit(self)
+        self.summarize_button = QPushButton("Summarize", self)
+        self.summary_text = QTextEdit(self)
+        self.summarize_button.clicked.connect(self.summarize_api)
+
+        # Add to layout
+        layout.addWidget(label)
+        layout.addWidget(self.website_edit)
+        layout.addWidget(self.summarize_button)
+        layout.addWidget(self.summary_text)
+        # self.setLayout(layout)
+
+    def summarize_api(self):
+        try:
+            summarizer = TextSummarizer(url=self.website_edit.text())
+            summary = summarizer.summarize()
+            self.summary_text.setText(summary)
+        except Exception as e:
+            self.summary_text.setText(f"An error occurred: {e}")
+
 
 # 3. call chat completion, mention model, link with website text
 class TextSummarizer:
@@ -90,9 +128,13 @@ class TextSummarizer:
 
 if __name__ == "__main__":
     try:
-        summarizer = TextSummarizer(url="https://edwarddonner.com")
-        summary = summarizer.summarize()
-        print(summary)
+        app = QApplication(sys.argv)
+
+        summary_window = Gui()
+        summary_window.show()
+
+        app.exec()
+        
     except Exception as e:
         print(f"An error occurred. {e}")
 
