@@ -13,3 +13,7 @@ Different kind of summarization options
 2. Ollama Llama 3.2
 
 Uses software best practices and OOP principles
+
+## Project UI
+
+<img width="405" alt="app_image" src="https://github.com/user-attachments/assets/9df57587-f254-4a2b-b440-8bd3f2340d92" />
